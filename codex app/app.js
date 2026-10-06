@@ -49,7 +49,7 @@ function invalidateResult() {
 function summary() {
   if (!state.pack) return null;
   const result = evaluatePackage(state.pack, state.files, state.matches, state.expiryDates);
-  result.rows = result.rows.map(row => ({ ...row, expiryDate: state.expiryDates[row.requirement.id] ?? '' }));
+  result.rows = result.rows.map(row => ({ ...row, expiryDate: Object.hasOwn(state.expiryDates, row.requirement.id) ? state.expiryDates[row.requirement.id] : '' }));
   result.included = result.rows.filter(row => row.file);
   return result;
 }
@@ -179,7 +179,9 @@ function onExpiry(requirementId, dateString) {
   const requirement = state.pack.requirements.find(item => item.id === requirementId);
   if (!requirement?.has_expiry || !Object.hasOwn(state.matches, requirementId)) return;
   invalidateResult();
-  state.expiryDates = { ...state.expiryDates, [requirementId]: dateString };
+  const expiryDates = Object.assign(Object.create(null), state.expiryDates);
+  expiryDates[requirementId] = dateString;
+  state.expiryDates = expiryDates;
   state.notice = null;
   render();
 }

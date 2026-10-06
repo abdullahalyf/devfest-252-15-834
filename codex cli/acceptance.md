@@ -1,5 +1,7 @@
 # V01 acceptance checklist
 
+V03 update (2026-10-06 18:01 Asia/Dhaka): actual automated/browser results are recorded in `review-integration.md` and `REPORT.md`. Final npm test (63), independent verifier (12 groups / 16 actual pages) and build pass. Browser sample integration, lifecycle, language, keyboard selector/focus, loaded mobile overflow and Network inspection were exercised. Native file chooser/save/open, full visual PDF/full keyboard walkthrough and public production/Railway checks remain pending. The unchecked broad manual groups below retain their original scope; do not interpret V01's historical “UNRUN” status as the latest observation of every subcheck.
+
 All browser, visual, production and submission checks below are **UNRUN**. Tick only after actual observation; a Node verifier pass does not imply browser acceptance. Use only organizer fictional sample data. Run `node "codex cli/verify-sample.mjs"` from root, or `node verify-sample.mjs` from this directory. Exit 0 = automated checks passed; 1 = assertion/runtime failure; 2 = environment pending. The verifier writes no PDF evidence file.
 
 Independent oracle: organizer `problem_statement/AIDevFest-ViveCoding ProblemStatement.pdf` sections 4–6, 8–9; `AI_DevFest_Vibe_Coding_Rulebook_pwIsanM.pdf` sections 5, 8–11; actual sample JSON/PDFs. Deadline 2026-10-20. Trade 2026 expires 2027-06-30; bank expires 2026-12-31; trade 2025 expires 2025-06-30. Expected filename `T-2026-0417_Package.pdf`.

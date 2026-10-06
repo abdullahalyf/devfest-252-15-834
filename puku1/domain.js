@@ -412,11 +412,11 @@ export function duplicateGroups(files) {
 
 // --- buildChecklistCsv -----------------------------------------------------
 
-const FORMULA_PREFIXES = ['=', '+', '-', '@', '\t', '\r'];
+const FORMULA_PREFIXES = ['=', '+', '-', '@', '\t', '\r', '\n'];
 
 function csvEscape(value) {
   let s = value == null ? '' : String(value);
-  if (s.length > 0 && FORMULA_PREFIXES.includes(s[0])) {
+  if (s.length > 0 && (FORMULA_PREFIXES.includes(s[0]) || /^[\s\uFEFF]*[=+\-@]/u.test(s))) {
     // Neutralize spreadsheet formula injection with a leading single quote.
     s = "'" + s;
   }
@@ -431,7 +431,7 @@ function statusLabel(code, lang) {
     ok: 'OK',
     missing: 'Missing',
     'not-provided': 'Not provided',
-    'expiry-needed': 'Expiry needed',
+    'expiry-needed': 'Expiry date needed',
     expired: 'Expired',
   };
   const bn = {
@@ -446,7 +446,7 @@ function statusLabel(code, lang) {
 
 function expiryLabel(row, lang) {
   if (row.expiryDate) return row.expiryDate;
-  if (row.requirement && row.requirement.has_expiry) {
+  if (row.file && row.requirement && row.requirement.has_expiry) {
     // Expiring requirement that still needs a date — keep a hint so the
     // generated checklist makes the missing field obvious to the operator.
     return lang === 'bn' ? '(প্রয়োজন)' : '(required)';

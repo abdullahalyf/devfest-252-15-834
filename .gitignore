@@ -6,3 +6,11 @@ dist/
 .railway/
 worker-logs/
 .release-static/
+claude/sample-pack/
+codex cli/sample-pack/
+puku2/sample-pack/
+puku1/test_out.txt
+puku1/review-pack/
+.context/
+puku2/review-pack/
+puku1/probe.js

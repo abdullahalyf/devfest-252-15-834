@@ -651,3 +651,27 @@ test('buildChecklistCsv: rejects non-array rows', () => {
     (e) => e.code === 'bad-rows'
   );
 });
+
+test('buildChecklistCsv: neutralizes formulas after whitespace and control prefixes', () => {
+  for (const prefix of ['=', '+', '-', '@', '\t', '\r', '\n=', ' =', '\uFEFF=']) {
+    const pack = validateRequirements(samplePack);
+    const row = {
+      requirement: { ...pack.requirements[0], title_en: prefix + '1+1' },
+      file: { ...sampleFileMeta[0], name: prefix + '1+1.pdf' },
+      status: 'ok', expiryDate: '2027-06-30',
+    };
+    const csv = buildChecklistCsv([row]);
+    const escapedTitle = "'" + row.requirement.title_en;
+    const expectedCell = /[",\r\n]/.test(escapedTitle)
+      ? '"' + escapedTitle.replace(/"/g, '""') + '"' : escapedTitle;
+    assert.ok(csv.includes(expectedCell), JSON.stringify(prefix));
+  }
+});
+
+test('buildChecklistCsv: unmatched optional expiry row does not request a date', () => {
+  const pack = validateRequirements(samplePack);
+  const row = evaluatePackage(pack, sampleFileMeta, {}, {}).rows.find(r => r.requirement.id === 'R07');
+  const csv = buildChecklistCsv([row]);
+  assert.ok(!csv.includes('(required)'));
+  assert.ok(csv.includes('Not provided'));
+});

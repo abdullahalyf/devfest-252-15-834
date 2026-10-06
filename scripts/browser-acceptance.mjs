@@ -9,17 +9,23 @@ const { chromium } = require('playwright');
 const root = fileURLToPath(new URL('../', import.meta.url));
 const fixture = path.join(root, 'problem_statement/problem-pack/sample-pack');
 const docs = path.join(fixture, 'documents');
-const output = path.join(root, 'output');
-const screenshots = path.join(root, 'screenshots');
+const evidenceRoot = process.env.ACCEPTANCE_EVIDENCE_DIR ? path.resolve(process.env.ACCEPTANCE_EVIDENCE_DIR) : root;
+const output = path.join(evidenceRoot, 'output');
+const screenshots = path.join(evidenceRoot, 'screenshots');
 await mkdir(output, { recursive: true });
 await mkdir(screenshots, { recursive: true });
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const context = await browser.newContext({ acceptDownloads: true, viewport: { width: 1440, height: 1000 } });
 const page = await context.newPage();
 const errors = [], unexpectedRequests = [], results = [];
+const acceptanceUrl = process.env.ACCEPTANCE_URL || 'http://127.0.0.1:5173/';
+const expectedOrigin = new URL(acceptanceUrl).origin;
 page.on('pageerror', e => errors.push(e.message));
 page.on('request', request => {
-  if (!['GET', 'HEAD'].includes(request.method())) unexpectedRequests.push(`${request.method()} ${request.url()}`);
+  const url = request.url();
+  if (!['GET', 'HEAD'].includes(request.method()) || (!url.startsWith('blob:') && !url.startsWith('data:') && new URL(url).origin !== expectedOrigin)) {
+    unexpectedRequests.push(`${request.method()} ${url}`);
+  }
 });
 const idle = async () => { await page.waitForFunction(() => document.querySelector('#app')?.getAttribute('data-busy') === 'false'); };
 const record = message => { results.push(message); console.log(`PASS ${message}`); };
@@ -30,7 +36,7 @@ const match = async (id, name) => {
   await select.selectOption(value);
 };
 try {
-  await page.goto(process.env.ACCEPTANCE_URL || 'http://127.0.0.1:5173/');
+  await page.goto(acceptanceUrl);
   await idle();
   assert.equal(await page.locator('#tp-generate').isDisabled(), true);
   await page.locator('#tp-json-input').setInputFiles(path.join(fixture, 'requirements.json'));
@@ -96,8 +102,14 @@ try {
   assert.equal(await link.count(),0);
   assert.equal(await page.locator('#tp-generate').isDisabled(),true);
   record('Reset removes requirements, documents, matches and result');
+  await page.locator('#tp-json-input').setInputFiles(path.join(fixture, 'requirements.json')); await idle();
+  await page.locator('#tp-pdf-input').setInputFiles(Array(31).fill(path.join(docs,'experience_cert.pdf'))); await idle();
+  assert.equal(await page.locator('#tp-file-list > li').count(),30);
+  assert.ok((await page.locator('body').innerText()).includes('Maximum 30 PDF files'));
+  record('Real native upload of 31 organizer PDFs accepts only the allowed 30');
+  await page.getByRole('button',{name:'Reset / new project',exact:true}).click();
   assert.deepEqual(errors,[]);
   assert.deepEqual(unexpectedRequests,[]);
-  record('No browser errors or POST/PUT document network requests observed');
+  record('No browser errors, cross-origin requests or POST/PUT document uploads observed');
   await writeFile(path.join(output,'browser-acceptance.json'),JSON.stringify({url:page.url(),checkedAt:new Date().toISOString(),results,errors,unexpectedRequests},null,2)+'\n');
 } finally { await browser.close(); }
