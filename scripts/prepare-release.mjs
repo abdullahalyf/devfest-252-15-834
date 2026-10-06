@@ -15,7 +15,7 @@ const archive = path.join(root, '.release-static', commit + '.tar');
 execFileSync('git', ['archive', '--format=tar', '--output=' + archive, commit], { cwd: root });
 execFileSync('tar.exe', ['-xf', archive, '-C', snapshot]);
 // Dependencies are installed from the committed lockfile. Fail if it has changed.
-if (!(await readFile(path.join(snapshot, 'package-lock.json'))).equals(await readFile(path.join(root, 'package-lock.json')))) {
+if (JSON.stringify(JSON.parse(await readFile(path.join(snapshot, 'package-lock.json'), 'utf8'))) !== JSON.stringify(JSON.parse(await readFile(path.join(root, 'package-lock.json'), 'utf8')))) {
   throw new Error('Installed dependency lockfile differs from the committed snapshot.');
 }
 try { await symlink(path.join(root, 'node_modules'), path.join(snapshot, 'node_modules'), 'junction'); }
