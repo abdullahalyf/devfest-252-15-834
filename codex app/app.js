@@ -10,7 +10,7 @@ let epoch = 0;
 let state = initialState('en');
 
 function initialState(lang) {
-  return { lang, pack: null, files: [], matches: Object.create(null), expiryDates: Object.create(null), busy: false, notice: null, result: null, includeIndex: false };
+  return { lang, pack: null, files: [], matches: Object.create(null), expiryDates: Object.create(null), busy: false, notice: null, result: null, includeIndex: false, logo: null };
 }
 
 function notice(kind, en, bn) { state.notice = { kind, en, bn }; }
@@ -58,7 +58,7 @@ function render() {
   document.documentElement.lang = state.lang === 'bn' ? 'bn' : 'en';
   document.title = state.lang === 'bn' ? 'টেন্ডারডেস্ক — টেন্ডার প্যাকেজ তৈরি' : 'TenderDesk — Tender Package Builder';
   try {
-    renderApp(app, { lang: state.lang, pack: state.pack, files: state.files, summary: summary(), busy: state.busy, notice: state.notice, result: state.result, includeIndex: state.includeIndex }, actions);
+    renderApp(app, { lang: state.lang, pack: state.pack, files: state.files, summary: summary(), busy: state.busy, notice: state.notice, result: state.result, includeIndex: state.includeIndex, logoName: state.logo?.name || '' }, actions);
   } catch (error) {
     console.error('TenderDesk render failed:', error);
     app.replaceChildren();
@@ -230,6 +230,28 @@ function onLanguage(lang) {
   render();
 }
 
+async function onLogoUpload(file) {
+  if (!file || state.busy) return;
+  const taskEpoch = epoch;
+  state.busy = true; render();
+  try {
+    if (file.size > 1024 * 1024 || !/\.png$/i.test(file.name)) throw new Error('Invalid logo');
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (![137, 80, 78, 71, 13, 10, 26, 10].every((byte, i) => bytes[i] === byte)) throw new Error('Invalid PNG');
+    const image = await createImageBitmap(file); image.close();
+    if (epoch !== taskEpoch) return;
+    invalidateResult(); state.logo = { name: file.name, bytes };
+    notice('success', 'Company logo added to the cover.', 'প্রচ্ছদে কোম্পানির লোগো যোগ হয়েছে।');
+  } catch {
+    if (epoch === taskEpoch) notice('error', 'Choose a readable PNG logo, up to 1 MiB.', 'সর্বোচ্চ ১ MiB আকারের পাঠযোগ্য PNG লোগো বেছে নিন।');
+  } finally { if (epoch === taskEpoch) { state.busy = false; render(); } }
+}
+
+function onRemoveLogo() {
+  if (state.busy) return;
+  invalidateResult(); state.logo = null; state.notice = null; render();
+}
+
 function onReset() {
   epoch += 1;
   invalidateResult();
@@ -259,7 +281,7 @@ async function onGenerate() {
   invalidateResult();
   render();
   try {
-    const generated = await generatePackage({ pack: state.pack, included: currentSummary.included, expiryDates: state.expiryDates, includeIndex: state.includeIndex, generatedAt: new Date() });
+    const generated = await generatePackage({ pack: state.pack, included: currentSummary.included, expiryDates: state.expiryDates, includeIndex: state.includeIndex, generatedAt: new Date(), logoBytes: state.logo?.bytes });
     if (taskEpoch !== epoch) return;
     const url = URL.createObjectURL(new Blob([generated.bytes], { type: 'application/pdf' }));
     state.result = { url, filename: generated.filename, pageCount: generated.pageCount };
@@ -286,7 +308,7 @@ function onExportCsv() {
   render();
 }
 
-const actions = { onLoadRequirements, onUploadFiles, onRemoveFile, onMatch, onExpiry, onLanguage, onReset, onGenerate, onToggleIndex, onExportCsv, onAutoMatch };
+const actions = { onLoadRequirements, onUploadFiles, onRemoveFile, onMatch, onExpiry, onLanguage, onReset, onGenerate, onToggleIndex, onExportCsv, onAutoMatch, onLogoUpload, onRemoveLogo };
 window.addEventListener('pagehide', invalidateResult);
 window.addEventListener('pageshow', event => { if (event.persisted) render(); });
 render();

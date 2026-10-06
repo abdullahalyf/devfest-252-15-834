@@ -59,3 +59,9 @@ Native date entry order depends on browser locale; use the displayed day/month/y
 ভাষা পরিবর্তন করলে CSV-ও সেই ভাষায় পাওয়া যাবে; PDF-এর প্রচ্ছদ ইংরেজি। নথি/মিল/মেয়াদ/সূচিপত্র বদলালে আগের ডাউনলোড বাতিল হয়—আবার প্যাকেজ তৈরি করুন। নতুন নথি মেলালে পুরোনো মেয়াদ মুছে যায়। Reset সব কাজ মুছে দেয়, ভাষা থাকে। Refresh করলে কাজ হারাবে; সেশন সংরক্ষণ নেই।
 
 তারিখের ঘরে দিন/মাস/বছরের ক্রম ব্রাউজারের ভাষা অনুযায়ী হতে পারে। ক্যালেন্ডার বা দেখানো অংশ ব্যবহার করুন। Generate নিষ্ক্রিয় থাকলে সাইডবারের বাধাগুলি দেখুন। ঐচ্ছিক নথি মেলানোর পর তার মেয়াদ অনুপস্থিত বা শেষ হয়ে গেলেও প্যাকেজ আটকাবে।
+
+## Optional company logo / ঐচ্ছিক কোম্পানির লোগো
+
+After loading requirements, choose your PNG in the separate **Optional cover logo** chooser (up to1 MiB). It appears in the empty top-right cover margin, without changing the PDF document list/page count. Use **Remove logo** to remove it; replacing/removing it requires regenerating the PDF. An invalid logo preserves the previous valid logo and result. Logo data stays in browser memory; reset or loading a new requirements pack clears it.
+
+প্রয়োজনীয়তা লোড করার পর আলাদা **ঐচ্ছিক প্রচ্ছদ লোগো** ঘরে PNG বেছে নিন (সর্বোচ্চ১ MiB)। লোগোটি প্রচ্ছদের খালি উপরের ডানদিকে বসবে; PDF নথি বা পৃষ্ঠা বাড়বে না। **লোগো সরান** দিয়ে মুছতে পারবেন। লোগো বদলালে/সরালে প্যাকেজ আবার তৈরি করুন। ভুল PNG দিলে আগের বৈধ লোগো ও প্যাকেজ থাকে। Reset বা নতুন requirements লোড করলে লোগো মুছে যায়।

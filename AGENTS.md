@@ -1,6 +1,6 @@
 # Tender Document Package Builder — contest coordination
 
-BUILD is confirmed by Abdullah Alif. User-reported hard cutoff: 2026-10-06 19:00 Asia/Dhaka. Stop all code, Git and deployment changes at that time or immediately after submission, whichever comes first. User has released the Git hold and authorized coordinator commits, pushes and deployment. Do not infer registration number from student ID.
+BUILD is confirmed by Abdullah Alif. Participant reports organizer extension to19:30 Asia/Dhaka on6 October2026; our code/Git/deployment cutoff is19:25, or immediately on submission if earlier. This explicitly supersedes the earlier19:00 cutoff recorded in historical notes below. User has released the Git hold and authorized coordinator commits, pushes and deployment. Do not infer registration number from student ID.
 
 This is ONE browser-only application. No application backend, serverless functions, remote document uploads, database, API secrets, copied practice code, or purchased/upgraded services. Use only the organizer's fictional sample data in tests. Root package dependencies and root build files belong to the coordinator. Do not modify the provided PDFs or sample requirements.
 
@@ -28,3 +28,5 @@ Participant identity clarified18:44: university-issued contest user ID is VC120 
 U10 final stylesheet-only language-button refinement deadline18:48 has passed. All implementation writes are frozen. Coordinator owns exact-commit release/verification; workers may report read-only findings in chat. Reproduce any essential defect before requesting a new ownership handover. No code/Git/deployment after submission or19:00.
 
 Explicit user override18:52: coordinator may add one filename Auto-match bonus in app.js/ui.js, preserving PDF, status and date rules. Local65/65 tests, build and actual organizer browser flow must pass before release. No overlapping worker writes. User-specified bonus rollout cutoff18:56; existing verified changes were already committed and working tree was clean at task start.
+
+New authorization19:01: user requested company logo support, delegated placement choice, and reported organizer extension to19:30 with changes until19:25. Coordinator may add optional local PNG cover-logo upload/removal, isolated from the PDF document list and status/date/matching rules. Keep previous verified release until exact new build is public and verified. All workers remain read-only unless assigned explicitly.

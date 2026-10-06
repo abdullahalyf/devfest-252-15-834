@@ -316,6 +316,7 @@ function safeView(view) {
     notice: (view && view.notice) || null,
     result: (view && view.result) || null,
     includeIndex: !!(view && view.includeIndex),
+    logoName: view?.logoName || '',
   };
 }
 
@@ -502,6 +503,12 @@ function buildUploadSection(view, actions) {
     ]),
     dropZone,
     pdfInput,
+    el('label', { class: PREFIX + 'hint', for: 'tp-logo-input' }, view.lang === 'bn' ? 'ঐচ্ছিক প্রচ্ছদ লোগো (PNG, সর্বোচ্চ ১ MiB)' : 'Optional cover logo (PNG, up to 1 MiB)'),
+    el('input', { id: 'tp-logo-input', type: 'file', accept: 'image/png', disabled: view.busy, style: 'max-width:100%', onChange: e => { const file = e.target.files?.[0]; e.target.value = ''; if (file) actions.onLogoUpload(file); } }),
+    view.logoName ? el('div', { class: PREFIX + 'row-gap' }, [
+      el('p', { class: PREFIX + 'hint' }, view.logoName),
+      el('button', { id: 'tp-remove-logo', type: 'button', class: PREFIX + 'btn ' + PREFIX + 'btn-ghost ' + PREFIX + 'btn-sm', disabled: view.busy, onClick: () => actions.onRemoveLogo() }, view.lang === 'bn' ? 'লোগো সরান' : 'Remove logo'),
+    ]) : null,
     el('p', { class: PREFIX + 'hint', id: 'tp-upload-hint' }, L.uploadHint),
     buildFilesList(view, actions),
   ]);
@@ -820,6 +827,8 @@ export function renderApp(container, view, actions) {
     onToggleIndex: a.onToggleIndex || noop,
     onExportCsv: a.onExportCsv || noop,
     onAutoMatch: a.onAutoMatch || noop,
+    onLogoUpload: a.onLogoUpload || noop,
+    onRemoveLogo: a.onRemoveLogo || noop,
   };
 
   // Preserve focus before replacing DOM.

@@ -372,7 +372,7 @@ function layoutIndex(ctx) {
 
 // ---------- main ----------
 
-export async function generatePackage({ pack, included, expiryDates = {}, includeIndex = false, generatedAt = new Date() } = {}) {
+export async function generatePackage({ pack, included, expiryDates = {}, includeIndex = false, generatedAt = new Date(), logoBytes } = {}) {
   const rows = validateInput(pack, included, expiryDates, generatedAt);
   const tender = pack.tender;
 
@@ -405,6 +405,11 @@ export async function generatePackage({ pack, included, expiryDates = {}, includ
   const total = next - 1;
 
   drawCover(out, ctx);
+  if (logoBytes) {
+    const logo = await out.embedPng(logoBytes);
+    const size = logo.scale(40 / Math.max(logo.width, logo.height));
+    out.getPage(0).drawImage(logo, { x: A4[0] - MARGIN - size.width, y: A4[1] - MARGIN + 4, ...size });
+  }
   for (const ops of indexPages) {
     const page = out.addPage(A4);
     drawOps(page, ops.map((op) => (op.pageRef ? { ...op, str: op.pageRef.start === op.pageRef.end ? `${op.pageRef.start}` : `${op.pageRef.start}-${op.pageRef.end}` } : op)));

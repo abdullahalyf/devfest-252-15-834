@@ -49,6 +49,8 @@ npm run preview
 
 ## Bonus features
 
+- Optional **PNG company logo on the cover**, uploaded locally through a separate chooser (up to1 MiB), with remove/replace support. It does not become a matched PDF document or change page counts/order.
+
 - Conservative **Auto-match by filename**: shared word tokens suggest only unique best matches, preserve user assignments, group byte-identical duplicates and leave ties for manual review. Users review matches and enter actual expiry dates.
 
 - Optional document index with accurate package page ranges.

@@ -1,6 +1,6 @@
 # Submission handoff
 
-Abdullah Alif will submit the organizer form himself. This file does not claim a submission receipt. Aim for18:57 Asia/Dhaka on6 October2026; hard cutoff supplied by participant is19:00. Stop all changes immediately on submission if earlier.
+Abdullah Alif will submit the organizer form himself. This file does not claim a submission receipt. Participant reports an organizer deadline extension to19:30 Asia/Dhaka on6 October2026. Stop code/Git/deployment changes by19:25, then submit before19:30. Stop all changes immediately on submission if earlier. This supersedes the earlier19:00 cutoff in historical reports; the extension is recorded from the participant's message, not an independently retrieved announcement.
 
 | Field | Value |
 | --- | --- |
