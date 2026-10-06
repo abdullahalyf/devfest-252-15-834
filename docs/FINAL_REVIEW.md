@@ -1,9 +1,9 @@
 # Final review brief — 18:45–19:00 Asia/Dhaka, 6 October 2026
 
-Participant: Abdullah Alif; registration/student ID252-15-834; Daffodil International University; Room503; Computer08.
+Participant: Abdullah Alif; university-issued contest user ID VC120; student ID252-15-834; Daffodil International University; Room503; Computer08. The contest user ID was confirmed from the participant's screenshot after older reviews.
 
 Live app: https://tenderdesk-web-production.up.railway.app
-Repository: https://github.com/abdullahalyf/devfest-252-15-834
+Repository: https://github.com/abdullahalyf/devfest-VC120
 Read public /release.json for the current full deployed SHA. Do not assume an older report describes the current release. Coordinator verifies exact asset hashes with scripts/verify-release.mjs.
 
 ## Prompt for Claude app

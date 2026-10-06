@@ -22,3 +22,7 @@ U06/V05 final handover: all implementation workers have stopped writing. Coordin
 User-authorized U08 at18:40: Claude Code temporarily owns ONLY puku2/styles.css for restrained motion/interaction polish, with reduced-motion support. No JS/PDF/domain/contract changes. Finish and hand back by18:45. Coordinator is the sole release writer. Other workers remain read-only or chat-only; do not overlap stylesheet edits.
 
 U08 handover complete18:42: Claude has stopped writing. Coordinator owns the stylesheet and final release. Puku2 U09 is read-only review/chat output. No overlapping implementation writers remain.
+
+Participant identity clarified18:44: university-issued contest user ID is VC120 (participant screenshot);252-15-834 is the student ID. Current repository is devfest-VC120. Older worker reports retain their historical identity/repository attribution; current README and SUBMISSION.md are authoritative.
+
+U10 final stylesheet-only language-button refinement deadline18:48 has passed. All implementation writes are frozen. Coordinator owns exact-commit release/verification; workers may report read-only findings in chat. Reproduce any essential defect before requesting a new ownership handover. No code/Git/deployment after submission or19:00.

@@ -3,14 +3,15 @@
 A browser-only workspace for preparing a tender submission: load requirements, validate documents, and download one ordered PDF package. English and Bangla interfaces are included.
 
 **Live app:** https://tenderdesk-web-production.up.railway.app  
-**Repository:** https://github.com/abdullahalyf/devfest-252-15-834
+**Repository:** https://github.com/abdullahalyf/devfest-VC120
 
 ## Participant
 
 | Detail | Value |
 | --- | --- |
 | Name | Abdullah Alif |
-| Registration number / student ID, provided by participant | 252-15-834 |
+| Contest user ID issued by university, provided by participant | VC120 |
+| Student ID | 252-15-834 |
 | University | Daffodil International University |
 | Email | 252-15-834@diu.edu.bd |
 | Contest room | 503 |

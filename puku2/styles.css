@@ -112,16 +112,19 @@ body { font-family: var(--tp-font); font-size: 15px; line-height: 1.5; -webkit-t
 .tp-lang-btn {
   min-height: 40px;
   padding: 8px 16px;
-  border: 1px solid #8fd3c9;
-  background: transparent;
-  color: #fffdf8;
+  border: 2px solid #8fd3c9;
+  background: #fffdf8;
+  color: var(--tp-ink);
   border-radius: 999px;
   font: inherit;
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 800;
+  font-size: 15px;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
 }
-.tp-lang-btn:hover:not(:disabled) { background: var(--tp-teal); border-color: var(--tp-teal); }
+.tp-lang-btn:hover:not(:disabled) { background: var(--tp-teal); border-color: #8fd3c9; color: #fff; }
+.tp-lang-btn:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
 .tp-lang-btn:focus-visible { outline: 3px solid #8fd3c9; outline-offset: 3px; }
 .tp-lang-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
@@ -661,5 +664,5 @@ body { font-family: var(--tp-font); font-size: 15px; line-height: 1.5; -webkit-t
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
   .tp-btn:active:not(:disabled), .tp-dropzone:active:not(:disabled),
-  .tp-dropzone:hover:not(:disabled) .tp-dropzone-icon, .tp-dropzone-over .tp-dropzone-icon { transform: none; }
+  .tp-dropzone:hover:not(:disabled) .tp-dropzone-icon, .tp-dropzone-over .tp-dropzone-icon, .tp-lang-btn:active:not(:disabled) { transform: none; }
 }

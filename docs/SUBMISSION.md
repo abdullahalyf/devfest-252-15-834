@@ -6,11 +6,12 @@ Abdullah Alif will submit the organizer form himself. This file does not claim a
 | --- | --- |
 | Project | TenderDesk — Tender Document Package Builder |
 | Participant | Abdullah Alif |
-| Registration / student ID | 252-15-834 |
+| University-issued contest user ID | VC120 |
+| Student ID | 252-15-834 |
 | University | Daffodil International University |
 | Email | 252-15-834@diu.edu.bd |
 | Room / computer | 503 / 08 |
-| Repository | https://github.com/abdullahalyf/devfest-252-15-834 |
+| Repository | https://github.com/abdullahalyf/devfest-VC120 |
 | Live application | https://tenderdesk-web-production.up.railway.app |
 | Actual deployed commit | Read https://tenderdesk-web-production.up.railway.app/release.json and use its full `commit` value after coordinator confirms it matches public main. |
 | Example package | [T-2026-0417_Package.pdf](../output/T-2026-0417_Package.pdf) |
