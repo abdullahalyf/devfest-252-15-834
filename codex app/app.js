@@ -186,6 +186,44 @@ function onExpiry(requirementId, dateString) {
   render();
 }
 
+function onAutoMatch() {
+  if (state.busy || !state.pack) return;
+  const ignored = new Set(['pdf', 'cert', 'certificate', 'scan', 'of', 'the', 'and']);
+  const tokens = value => new Set((String(value).toLowerCase().match(/[a-z]+/g) || []).filter(token => !ignored.has(token)));
+  const used = new Set(state.files.filter(file => Object.values(state.matches).includes(file.id)).map(file => file.hash));
+  const groups = new Map();
+  for (const file of state.files) {
+    if (used.has(file.hash)) continue;
+    if (!groups.has(file.hash)) groups.set(file.hash, []);
+    groups.get(file.hash).push(file);
+  }
+  const choices = [];
+  for (const requirement of state.pack.requirements) {
+    if (Object.hasOwn(state.matches, requirement.id) && state.matches[requirement.id]) continue;
+    const title = tokens(requirement.title_en);
+    let best = 0, candidates = [];
+    for (const [hash, files] of groups) {
+      const score = Math.max(...files.map(file => [...tokens(file.name)].filter(token => title.has(token)).length));
+      if (score > best) { best = score; candidates = [{ hash, file: files.reduce((first, file) => file.name.length < first.name.length ? file : first, files[0]) }]; }
+      else if (score > 0 && score === best) candidates.push({ hash, file: files.reduce((first, file) => file.name.length < first.name.length ? file : first, files[0]) });
+    }
+    if (best > 0 && candidates.length === 1) choices.push({ requirement, score: best, ...candidates[0] });
+  }
+  choices.sort((a, b) => b.score - a.score || a.requirement.order - b.requirement.order);
+  let matched = 0;
+  for (const choice of choices) {
+    if (used.has(choice.hash)) continue;
+    const next = assignMatch(state, choice.requirement.id, choice.file.id);
+    state.matches = next.matches;
+    state.expiryDates = next.expiryDates;
+    used.add(choice.hash);
+    matched += 1;
+  }
+  if (matched) invalidateResult();
+  notice('success', `${matched} matched automatically; please review and enter expiry dates.`, `${matched}টি স্বয়ংক্রিয়ভাবে মিলেছে; অনুগ্রহ করে যাচাই করুন এবং মেয়াদের তারিখ দিন।`);
+  render();
+}
+
 function onLanguage(lang) {
   if (lang !== 'en' && lang !== 'bn') return;
   state.lang = lang;
@@ -248,7 +286,7 @@ function onExportCsv() {
   render();
 }
 
-const actions = { onLoadRequirements, onUploadFiles, onRemoveFile, onMatch, onExpiry, onLanguage, onReset, onGenerate, onToggleIndex, onExportCsv };
+const actions = { onLoadRequirements, onUploadFiles, onRemoveFile, onMatch, onExpiry, onLanguage, onReset, onGenerate, onToggleIndex, onExportCsv, onAutoMatch };
 window.addEventListener('pagehide', invalidateResult);
 window.addEventListener('pageshow', event => { if (event.persisted) render(); });
 render();

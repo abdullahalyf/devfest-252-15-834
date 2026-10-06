@@ -654,7 +654,10 @@ function buildRequirementsTable(view, actions) {
   return el('section', { class: PREFIX + 'card ' + PREFIX + 'card-reqs ' + PREFIX + 'card-step ' + PREFIX + 'card-step-3', 'aria-labelledby': 'tp-reqs-h' }, [
     el('div', { class: PREFIX + 'card-head' }, [
       el('h2', { class: PREFIX + 'card-title', id: 'tp-reqs-h' }, L.step3),
-      el('span', { class: PREFIX + 'count' }, String(reqs.length)),
+      el('div', { class: PREFIX + 'row-gap' }, [
+        el('button', { type: 'button', id: 'tp-auto-match', class: PREFIX + 'btn ' + PREFIX + 'btn-secondary', disabled: view.busy || !view.files.length, onClick: () => actions.onAutoMatch() }, view.lang === 'bn' ? 'স্বয়ংক্রিয় মিলান' : 'Auto-match'),
+        el('span', { class: PREFIX + 'count' }, String(reqs.length)),
+      ]),
     ]),
     el('div', { class: PREFIX + 'table-wrap' }, [table]),
   ]);
@@ -816,6 +819,7 @@ export function renderApp(container, view, actions) {
     onGenerate: a.onGenerate || noop,
     onToggleIndex: a.onToggleIndex || noop,
     onExportCsv: a.onExportCsv || noop,
+    onAutoMatch: a.onAutoMatch || noop,
   };
 
   // Preserve focus before replacing DOM.

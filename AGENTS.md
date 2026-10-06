@@ -26,3 +26,5 @@ U08 handover complete18:42: Claude has stopped writing. Coordinator owns the sty
 Participant identity clarified18:44: university-issued contest user ID is VC120 (participant screenshot);252-15-834 is the student ID. Current repository is devfest-VC120. Older worker reports retain their historical identity/repository attribution; current README and SUBMISSION.md are authoritative.
 
 U10 final stylesheet-only language-button refinement deadline18:48 has passed. All implementation writes are frozen. Coordinator owns exact-commit release/verification; workers may report read-only findings in chat. Reproduce any essential defect before requesting a new ownership handover. No code/Git/deployment after submission or19:00.
+
+Explicit user override18:52: coordinator may add one filename Auto-match bonus in app.js/ui.js, preserving PDF, status and date rules. Local65/65 tests, build and actual organizer browser flow must pass before release. No overlapping worker writes. User-specified bonus rollout cutoff18:56; existing verified changes were already committed and working tree was clean at task start.

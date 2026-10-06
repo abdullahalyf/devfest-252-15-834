@@ -49,6 +49,8 @@ npm run preview
 
 ## Bonus features
 
+- Conservative **Auto-match by filename**: shared word tokens suggest only unique best matches, preserve user assignments, group byte-identical duplicates and leave ties for manual review. Users review matches and enter actual expiry dates.
+
 - Optional document index with accurate package page ranges.
 - UTF-8 checklist CSV export with bilingual headings, expiry dates, status, and spreadsheet-formula protection.
 - Duplicate detection uses exact content hashes rather than filenames. The renamed duplicate in the organizer samples is detected.

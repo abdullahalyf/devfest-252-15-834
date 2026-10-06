@@ -37,3 +37,7 @@ Requirements replacement atomically clears uploaded files/matches/expiry/result 
 
 ## Organizer sample expected evidence
 Tender deadline 2026-10-20. Use trade_license_2026.pdf (expiry 2027-06-30), TIN, VAT, bank_solvency.pdf (expiry 2026-12-31), one experience_cert.pdf (duplicate copy has equal SHA-256), technical proposal (6 pages), financial proposal (2 pages), scan_0042.pdf (1 scanned signed declaration). Optional R06 and R07 not provided. Without bonus index output total is 16 pages: cover1 + trade1 + TIN1 + VAT1 + bank1 + experience2 + technical6 + financial2 + declaration1. 2025 trade license expiry2025-06-30 must fail. company_logo.png must be rejected as a document. Do not modify supplied fixtures or generate unrelated synthetic PDF fixtures; rulebook says use only provided sample data.
+
+## Filename Auto-match extension —18:54
+
+UI may invoke optional actions.onAutoMatch(); coordinator fills only previously unmatched requirements using unique best filename/title_en word-token scores. Hash-equivalent files are one candidate; existing assigned hashes are unavailable; ties and zero scores remain manual. Greedy choices use descending score then requirement order. All assignments use existing assignMatch, with no PDF/status/date-rule changes. Button and completion notice are bilingual; users enter actual expiry dates manually.
