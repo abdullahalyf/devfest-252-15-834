@@ -1,0 +1,17 @@
+{
+  "url": "http://127.0.0.1:5173/",
+  "checkedAt": "2026-10-06T11:57:22.049Z",
+  "results": [
+    "Actual JSON and ten PDFs loaded; PNG rejected; duplicate content flagged",
+    "All mandatory matches and expiry dates pass; duplicate assignment rejected",
+    "Expiry before deadline blocks; equal deadline passes; date focus retained",
+    "Browser generated and downloaded the actual sample package",
+    "Invalid requirements replacement preserves working documents and download",
+    "Bangla UI and CSV download pass; 360px layout has no horizontal overflow",
+    "Match replacement clears expiry and invalidates old download; expired 2025 file blocks",
+    "Reset removes requirements, documents, matches and result",
+    "No browser errors or POST/PUT document network requests observed"
+  ],
+  "errors": [],
+  "unexpectedRequests": []
+}

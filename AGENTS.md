@@ -1,6 +1,6 @@
 # Tender Document Package Builder — contest coordination
 
-BUILD is confirmed by Abdullah Alif. User-reported hard cutoff: 2026-10-06 19:00 Asia/Dhaka. Stop all code, Git and deployment changes at that time or immediately after submission, whichever comes first. Git and pushes are HOLD until the user releases that hold. Do not infer registration number from student ID.
+BUILD is confirmed by Abdullah Alif. User-reported hard cutoff: 2026-10-06 19:00 Asia/Dhaka. Stop all code, Git and deployment changes at that time or immediately after submission, whichever comes first. User has released the Git hold and authorized coordinator commits, pushes and deployment. Do not infer registration number from student ID.
 
 This is ONE browser-only application. No application backend, serverless functions, remote document uploads, database, API secrets, copied practice code, or purchased/upgraded services. Use only the organizer's fictional sample data in tests. Root package dependencies and root build files belong to the coordinator. Do not modify the provided PDFs or sample requirements.
 

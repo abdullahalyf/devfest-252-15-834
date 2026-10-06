@@ -248,4 +248,5 @@ function onExportCsv() {
 
 const actions = { onLoadRequirements, onUploadFiles, onRemoveFile, onMatch, onExpiry, onLanguage, onReset, onGenerate, onToggleIndex, onExportCsv };
 window.addEventListener('pagehide', invalidateResult);
+window.addEventListener('pageshow', event => { if (event.persisted) render(); });
 render();
