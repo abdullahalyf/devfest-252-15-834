@@ -49,7 +49,7 @@ npm run preview
 
 ## Bonus features
 
-- Optional **PNG company logo on the cover**, uploaded locally through a separate chooser (up to1 MiB), with remove/replace support. It does not become a matched PDF document or change page counts/order.
+- Optional **PNG logo, seal or signature on selected package pages**, uploaded locally through a separate chooser (up to1 MiB), with remove/replace support. Choose Cover only (default), All pages, or Custom pages such as `1,16` or `2-5`. Invalid custom numbers block generation; clearing the field restores cover-only placement. Non-cover placement is above the footer band. It does not become a matched PDF document or change page counts/order.
 
 - Conservative **Auto-match by filename**: shared word tokens suggest only unique best matches, preserve user assignments, group byte-identical duplicates and leave ties for manual review. Users review matches and enter actual expiry dates.
 

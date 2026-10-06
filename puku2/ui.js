@@ -317,6 +317,9 @@ function safeView(view) {
     result: (view && view.result) || null,
     includeIndex: !!(view && view.includeIndex),
     logoName: view?.logoName || '',
+    sealMode: view?.sealMode || 'cover',
+    sealCustom: view?.sealCustom || '',
+    sealError: !!view?.sealError,
   };
 }
 
@@ -505,6 +508,17 @@ function buildUploadSection(view, actions) {
     pdfInput,
     el('label', { class: PREFIX + 'hint', for: 'tp-logo-input' }, view.lang === 'bn' ? 'ঐচ্ছিক প্রচ্ছদ লোগো (PNG, সর্বোচ্চ ১ MiB)' : 'Optional cover logo (PNG, up to 1 MiB)'),
     el('input', { id: 'tp-logo-input', type: 'file', accept: 'image/png', disabled: view.busy, style: 'max-width:100%', onChange: e => { const file = e.target.files?.[0]; e.target.value = ''; if (file) actions.onLogoUpload(file); } }),
+    el('label', { class: PREFIX + 'hint', for: 'tp-seal-mode' }, view.lang === 'bn' ? 'PNG লোগো / সিল / স্বাক্ষরের পৃষ্ঠা' : 'PNG logo / seal / signature pages'),
+    el('select', { id: 'tp-seal-mode', class: PREFIX + 'select', disabled: view.busy || !view.logoName, onChange: e => actions.onSealSelection(e.target.value) }, [
+      el('option', { value: 'cover', selected: view.sealMode === 'cover' }, view.lang === 'bn' ? 'শুধু প্রচ্ছদ' : 'Cover only'),
+      el('option', { value: 'all', selected: view.sealMode === 'all' }, view.lang === 'bn' ? 'সব পৃষ্ঠা' : 'All pages'),
+      el('option', { value: 'custom', selected: view.sealMode === 'custom' }, view.lang === 'bn' ? 'নির্দিষ্ট পৃষ্ঠা (যেমন 1,16)' : 'Custom pages'),
+    ]),
+    view.sealMode === 'custom' ? el('div', null, [
+      el('label', { class: PREFIX + 'hint', for: 'tp-seal-custom' }, view.lang === 'bn' ? 'প্যাকেজের পৃষ্ঠা (যেমন 1,16 বা 2-5); খালি রাখলে শুধু প্রচ্ছদ' : 'Package pages (e.g. 1,16 or 2-5); blank means cover only'),
+      el('input', { id: 'tp-seal-custom', type: 'text', value: view.sealCustom, placeholder: '1,16', class: PREFIX + 'input', disabled: view.busy, 'aria-invalid': String(view.sealError), 'aria-describedby': 'tp-seal-error', onInput: e => actions.onSealSelection('custom', e.target.value) }),
+    ]) : null,
+    view.sealError ? el('p', { id: 'tp-seal-error', role: 'alert', class: PREFIX + 'error' }, view.lang === 'bn' ? 'সঠিক প্যাকেজ পৃষ্ঠা লিখুন (যেমন 1,16 বা 2-5)। অক্ষর বা পৃষ্ঠাসংখ্যার বাইরের নম্বর গ্রহণ করা হয় না।' : 'Enter valid package pages (e.g. 1,16 or 2-5). Letters and out-of-range page numbers are not allowed.') : null,
     view.logoName ? el('div', { class: PREFIX + 'row-gap' }, [
       el('p', { class: PREFIX + 'hint' }, view.logoName),
       el('button', { id: 'tp-remove-logo', type: 'button', class: PREFIX + 'btn ' + PREFIX + 'btn-ghost ' + PREFIX + 'btn-sm', disabled: view.busy, onClick: () => actions.onRemoveLogo() }, view.lang === 'bn' ? 'লোগো সরান' : 'Remove logo'),
@@ -770,7 +784,7 @@ function buildSidebar(view, actions) {
         id: 'tp-generate',
         class: PREFIX + 'btn ' + PREFIX + 'btn-primary ' + PREFIX + 'btn-block ' + PREFIX + 'btn-lg',
         onClick: () => actions.onGenerate(),
-        disabled: view.busy || !canGen,
+        disabled: view.busy || !canGen || view.sealError,
         'aria-describedby': 'tp-generate-help',
       }, view.busy ? L.generating : L.generate),
       el('p', { id: 'tp-generate-help', class: PREFIX + 'small ' + (canGen ? PREFIX + 'ok-text' : PREFIX + 'muted') }, helpText),
@@ -829,6 +843,7 @@ export function renderApp(container, view, actions) {
     onAutoMatch: a.onAutoMatch || noop,
     onLogoUpload: a.onLogoUpload || noop,
     onRemoveLogo: a.onRemoveLogo || noop,
+    onSealSelection: a.onSealSelection || noop,
   };
 
   // Preserve focus before replacing DOM.

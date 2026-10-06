@@ -10,7 +10,7 @@ let epoch = 0;
 let state = initialState('en');
 
 function initialState(lang) {
-  return { lang, pack: null, files: [], matches: Object.create(null), expiryDates: Object.create(null), busy: false, notice: null, result: null, includeIndex: false, logo: null };
+  return { lang, pack: null, files: [], matches: Object.create(null), expiryDates: Object.create(null), busy: false, notice: null, result: null, includeIndex: false, logo: null, sealMode: 'cover', sealCustom: '' };
 }
 
 function notice(kind, en, bn) { state.notice = { kind, en, bn }; }
@@ -54,11 +54,31 @@ function summary() {
   return result;
 }
 
+function sealSelection(currentSummary = summary()) {
+  if (state.sealMode === 'cover' || (state.sealMode === 'custom' && !state.sealCustom.trim())) return { pages: [1], error: false };
+  if (state.sealMode === 'all') return { pages: 'all', error: false };
+  const total = (currentSummary?.pageCount || 1) + (state.includeIndex ? 1 : 0);
+  const pages = new Set();
+  for (const part of state.sealCustom.split(',')) {
+    const match = /^\s*(\d+)\s*(?:-\s*(\d+)\s*)?$/.exec(part);
+    if (!match) return { error: true };
+    const start = Number(match[1]), end = Number(match[2] || match[1]);
+    if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 1 || end < start || end > total) return { error: true };
+    for (let page = start; page <= end; page += 1) pages.add(page);
+  }
+  return { pages: [...pages], error: false };
+}
+
+function onSealSelection(mode, custom = state.sealCustom) {
+  if (state.busy || !['cover', 'all', 'custom'].includes(mode)) return;
+  invalidateResult(); state.sealMode = mode; state.sealCustom = custom; state.notice = null; render();
+}
+
 function render() {
   document.documentElement.lang = state.lang === 'bn' ? 'bn' : 'en';
   document.title = state.lang === 'bn' ? 'টেন্ডারডেস্ক — টেন্ডার প্যাকেজ তৈরি' : 'TenderDesk — Tender Package Builder';
   try {
-    renderApp(app, { lang: state.lang, pack: state.pack, files: state.files, summary: summary(), busy: state.busy, notice: state.notice, result: state.result, includeIndex: state.includeIndex, logoName: state.logo?.name || '' }, actions);
+    renderApp(app, { lang: state.lang, pack: state.pack, files: state.files, summary: summary(), busy: state.busy, notice: state.notice, result: state.result, includeIndex: state.includeIndex, logoName: state.logo?.name || '', sealMode: state.sealMode, sealCustom: state.sealCustom, sealError: sealSelection().error }, actions);
   } catch (error) {
     console.error('TenderDesk render failed:', error);
     app.replaceChildren();
@@ -241,7 +261,7 @@ async function onLogoUpload(file) {
     const image = await createImageBitmap(file); image.close();
     if (epoch !== taskEpoch) return;
     invalidateResult(); state.logo = { name: file.name, bytes };
-    notice('success', 'Company logo added to the cover.', 'প্রচ্ছদে কোম্পানির লোগো যোগ হয়েছে।');
+    notice('success', 'PNG added. Choose the package pages below.', 'PNG যোগ হয়েছে। নিচে প্যাকেজের পৃষ্ঠা বেছে নিন।');
   } catch {
     if (epoch === taskEpoch) notice('error', 'Choose a readable PNG logo, up to 1 MiB.', 'সর্বোচ্চ ১ MiB আকারের পাঠযোগ্য PNG লোগো বেছে নিন।');
   } finally { if (epoch === taskEpoch) { state.busy = false; render(); } }
@@ -249,7 +269,7 @@ async function onLogoUpload(file) {
 
 function onRemoveLogo() {
   if (state.busy) return;
-  invalidateResult(); state.logo = null; state.notice = null; render();
+  invalidateResult(); state.logo = null; state.sealMode = 'cover'; state.sealCustom = ''; state.notice = null; render();
 }
 
 function onReset() {
@@ -270,6 +290,10 @@ function onToggleIndex(enabled) {
 async function onGenerate() {
   if (state.busy || !state.pack) return;
   const currentSummary = summary();
+  const selection = sealSelection(currentSummary);
+  if (selection.error) {
+    notice('error', 'Enter valid package page numbers, such as 1,16 or 2-5.', 'সঠিক প্যাকেজ পৃষ্ঠা লিখুন, যেমন 1,16 বা 2-5।'); render(); return;
+  }
   if (!currentSummary?.canGenerate) {
     notice('error', 'Resolve all missing documents and expiry issues before generating.', 'প্যাকেজ তৈরির আগে সব অনুপস্থিত নথি ও মেয়াদের সমস্যা সমাধান করুন।');
     render();
@@ -281,7 +305,7 @@ async function onGenerate() {
   invalidateResult();
   render();
   try {
-    const generated = await generatePackage({ pack: state.pack, included: currentSummary.included, expiryDates: state.expiryDates, includeIndex: state.includeIndex, generatedAt: new Date(), logoBytes: state.logo?.bytes });
+    const generated = await generatePackage({ pack: state.pack, included: currentSummary.included, expiryDates: state.expiryDates, includeIndex: state.includeIndex, generatedAt: new Date(), logoBytes: state.logo?.bytes, sealPages: selection.pages });
     if (taskEpoch !== epoch) return;
     const url = URL.createObjectURL(new Blob([generated.bytes], { type: 'application/pdf' }));
     state.result = { url, filename: generated.filename, pageCount: generated.pageCount };
@@ -308,7 +332,7 @@ function onExportCsv() {
   render();
 }
 
-const actions = { onLoadRequirements, onUploadFiles, onRemoveFile, onMatch, onExpiry, onLanguage, onReset, onGenerate, onToggleIndex, onExportCsv, onAutoMatch, onLogoUpload, onRemoveLogo };
+const actions = { onLoadRequirements, onUploadFiles, onRemoveFile, onMatch, onExpiry, onLanguage, onReset, onGenerate, onToggleIndex, onExportCsv, onAutoMatch, onLogoUpload, onRemoveLogo, onSealSelection };
 window.addEventListener('pagehide', invalidateResult);
 window.addEventListener('pageshow', event => { if (event.persisted) render(); });
 render();

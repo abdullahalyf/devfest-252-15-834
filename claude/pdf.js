@@ -372,7 +372,7 @@ function layoutIndex(ctx) {
 
 // ---------- main ----------
 
-export async function generatePackage({ pack, included, expiryDates = {}, includeIndex = false, generatedAt = new Date(), logoBytes } = {}) {
+export async function generatePackage({ pack, included, expiryDates = {}, includeIndex = false, generatedAt = new Date(), logoBytes, sealPages = [1] } = {}) {
   const rows = validateInput(pack, included, expiryDates, generatedAt);
   const tender = pack.tender;
 
@@ -405,11 +405,6 @@ export async function generatePackage({ pack, included, expiryDates = {}, includ
   const total = next - 1;
 
   drawCover(out, ctx);
-  if (logoBytes) {
-    const logo = await out.embedPng(logoBytes);
-    const size = logo.scale(40 / Math.max(logo.width, logo.height));
-    out.getPage(0).drawImage(logo, { x: A4[0] - MARGIN - size.width, y: A4[1] - MARGIN + 4, ...size });
-  }
   for (const ops of indexPages) {
     const page = out.addPage(A4);
     drawOps(page, ops.map((op) => (op.pageRef ? { ...op, str: op.pageRef.start === op.pageRef.end ? `${op.pageRef.start}` : `${op.pageRef.start}-${op.pageRef.end}` } : op)));
@@ -439,6 +434,20 @@ export async function generatePackage({ pack, included, expiryDates = {}, includ
 
   const pages = out.getPages();
   if (pages.length !== total) throw fail('page-count-mismatch', `Package has ${pages.length} pages, expected ${total}.`);
+  if (logoBytes) {
+    const selected = sealPages === 'all' ? pages.map((_, i) => i + 1) : sealPages;
+    if (!Array.isArray(selected) || selected.some(n => !Number.isInteger(n) || n < 1 || n > total)) throw fail('invalid-seal-pages', 'Invalid package page selection.');
+    const logo = await out.embedPng(logoBytes);
+    for (const number of new Set(selected)) {
+      const page = pages[number - 1];
+      const { width, height } = page.getSize();
+      const target = number === 1 ? 40 : Math.min(60, width - 24, height - FOOTER_BAND - 12);
+      const size = logo.scale(target / Math.max(logo.width, logo.height));
+      page.drawImage(logo, number === 1
+        ? { x: A4[0] - MARGIN - size.width, y: A4[1] - MARGIN + 4, ...size }
+        : { x: width - 12 - size.width, y: FOOTER_BAND + 6, ...size });
+    }
+  }
   const footerId = clean(tender.tender_id) || 'Tender';
   pages.forEach((page, i) => {
     const { width } = page.getSize();
