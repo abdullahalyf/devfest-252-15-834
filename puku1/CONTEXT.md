@@ -1,0 +1,156 @@
+# Local worker context — read this instead of out-of-scope parent files
+
+The following context is the coordinator-provided binding contract. Parent reads are unnecessary for your initial implementation. Use the sample-pack/ folder in YOUR current directory for organizer fixtures and tests. Coordinator runs central imports/build/tests. Keep writing only your assigned implementation/report files.
+
+# Tender Document Package Builder — contest coordination
+
+BUILD is confirmed by Abdullah Alif. User-reported hard cutoff: 2026-10-06 19:00 Asia/Dhaka. Stop all code, Git and deployment changes at that time or immediately after submission, whichever comes first. Git and pushes are HOLD until the user releases that hold. Do not infer registration number from student ID.
+
+This is ONE browser-only application. No application backend, serverless functions, remote document uploads, database, API secrets, copied practice code, or purchased/upgraded services. Use only the organizer's fictional sample data in tests. Root package dependencies and root build files belong to the coordinator. Do not modify the provided PDFs or sample requirements.
+
+## Exclusive ownership
+- Codex app coordinator: root files, docs/, codex app/, public assets, evidence, dependency installation, integration, Git and Railway release.
+- Puku 1: puku1/domain.js, puku1/domain.test.js, puku1/REPORT.md only.
+- Puku 2: puku2/ui.js, puku2/styles.css, puku2/REPORT.md only.
+- Claude Code: claude/pdf.js, claude/pdf.test.js, claude/REPORT.md only.
+- Codex CLI: codex cli/acceptance.md, codex cli/verify-sample.mjs, codex cli/REPORT.md only.
+
+Read your local TASK.md. Workers do not install packages, run Git, change branches, commit, push, reset, stash, rebase, or deploy. Do not start additional writers or agents. Never edit another worker's files. Request contract changes in your report; preserve the exports and argument shapes in docs/CONTRACT.md. Every worker reports actual checks and limitations honestly. Imported text must be rendered with textContent; never insert untrusted HTML.
+
+Target the first working flow promptly. Main requirements precede bonuses. Keep all work in English. Include a short final REPORT.md with task ID, changed files, actual checks, unresolved gaps and integration instructions.
+
+
+# Contract v1 — frozen for first integration
+
+Architecture: vanilla browser ES modules + Vite + pdf-lib. All file processing happens locally in browser memory. No React or backend. Root entry imports codex app/app.js; app imports puku1/domain.js, puku2/ui.js and claude/pdf.js. Root package.json has pdf-lib 1.17.1 and Vite 8.3.3. Coordinator installs dependencies.
+
+## Data
+Pack: `{ tender: { tender_id, title, procuring_entity, bidder, submission_deadline }, requirements: [{ id, order, title_en, title_bn, mandatory, has_expiry }] }`. Deadline and expiry values are valid YYYY-MM-DD calendar dates. Required text fields are strings; flags are actual booleans; ids and positive integer order values are unique. Sort requirements by order, without mutating inputs. Unknown harmless extra fields may be ignored. Do not hardcode sample identifiers.
+
+FileRecord: `{ id: string, name: string, size: number, pages: number, hash: string, bytes: Uint8Array }`. SHA-256 is computed from exact file bytes by app with crypto.subtle. File ids remain unique even for equal contents.
+
+State subset for domain: `{ pack, files: FileRecord[], matches: { [requirementId]: fileId }, expiryDates: { [requirementId]: 'YYYY-MM-DD' } }`.
+
+Status codes: `missing`, `expiry-needed`, `expired`, `not-provided`, `ok`. A mandatory missing file blocks; optional missing file is not-provided. A matched expiring document without a valid date is expiry-needed and blocks. Expiry strictly BEFORE tender deadline is expired and blocks; equal dates pass. Duplicate flags belong to uploaded files, not a sixth requirement status.
+
+## Puku 1 exports from puku1/domain.js
+- `validateRequirements(raw)` returns normalized Pack or throws Error carrying `.code` (e.g. `invalid-requirements`). Validate the full shape, real dates, ids and ordering.
+- `statusFor(requirement, fileOrNull, expiryDate, deadline)` returns one status code.
+- `assignMatch(state, requirementId, fileIdOrNull)` returns `{ matches, expiryDates }` copies. Reject unknown ids, a file already used by a different requirement, or a hash already matched through another file id. Throws Error with `.code`. Changing/unmatching a requirement clears its prior expiry. Selecting the current file is a no-op retaining expiry. Never mutate inputs.
+- `evaluatePackage(pack, files, matches, expiryDates)` returns `{ rows, canGenerate, blockers, included, pageCount }`. Row: `{ requirement, file: FileRecord|null, status }`. Rows and included sorted by order; included contains matched rows. Blockers contains blocking rows. pageCount = 1 + sum(included file pages), without optional index. Defensively prevent canGenerate for inconsistent matches/duplicate contents (may add `integrityErrors: string[]`). Empty/unloaded pack is never generatable.
+- `duplicateGroups(files)` returns `FileRecord[][]` for hashes occurring at least twice.
+- `buildChecklistCsv(rows, lang='en')` returns spreadsheet-safe CSV including document, filename, pages, expiry and status. Rows may have `.expiryDate` added by coordinator. Escape commas/newlines/quotes and neutralize spreadsheet formulas. This is a bounded bonus after core correctness.
+
+## Puku 2 exports from puku2/ui.js
+`renderApp(container, view, actions)` constructs/renders the UI safely. No domain mutations, PDF imports or global state ownership. `view = { lang:'en'|'bn', pack:Pack|null, files:FileRecord[], summary:evaluatePackage result|null, busy:boolean, notice:null|{kind:'error'|'success'|'info',en:string,bn:string}, result:null|{url:string,filename:string,pageCount:number}, includeIndex:boolean }`.
+
+Actions: `onLoadRequirements(File)`, `onUploadFiles(File[]|FileList)`, `onRemoveFile(fileId)`, `onMatch(requirementId,fileIdOrNull)`, `onExpiry(requirementId,dateString)`, `onLanguage('en'|'bn')`, `onReset()`, `onGenerate()`, `onToggleIndex(boolean)`, `onExportCsv()`. Only these callbacks; coordinator implements them. All user actions are passed through. File accepts must support arbitrary PDF names and re-selection of same input after reset/error. During busy disable destructive actions. Keep language switch functional.
+
+Show tender details, JSON upload, multiple PDF upload, file list with page counts/removal and duplicate flags, sorted requirement cards/rows with match selectors/status/expiry input, clear blocking reasons, disabled Generate until summary.canGenerate, total included pages, download result, reset/new project, language switch. Use labels, aria-live notice, clear keyboard focus and mobile layout without horizontal overflow. Preserve focused expiry inputs and selection across render (coordinator triggers immediate render per edit). Every main label/button/error instruction has Bangla and English text. Choose a professional light paper/ink/teal design with a useful side summary. No runtime external fonts/assets. Write styles in puku2/styles.css and use class names prefixed `tp-`.
+
+## Claude exports from claude/pdf.js
+- `inspectPdf(bytes:Uint8Array)` async -> `{ pages:number }` or Error with `.code` (`invalid-pdf`, `encrypted-pdf`). Do not accept damaged/password-protected input silently. Reject invalid/empty PDF data clearly.
+- `generatePackage({ pack, included, expiryDates={}, includeIndex=false, generatedAt=new Date() })` async -> `{ bytes:Uint8Array, filename:string, pageCount:number }`. included is sorted Row[] from evaluatePackage; file.bytes contains source. Generation rechecks input validity and duplicate contents. Return filename `<safe tender_id>_Package.pdf` (sanitize path characters only; ordinary sample id stays exact).
+
+Cover is page 1, English, tender ID/title/procuring entity/bidder/deadline/creation date and ordered included document names (title_en). All original pages follow in exact document order and original within-file order; omit unprovided optional requirements. Every page including cover gets `<tender_id> | Page X of Y`. Footer in a separate bottom margin, never over existing content: embed original source page onto a slightly taller output page, shifted above reserved footer band; preserve document readability and original dimensions. Deal with crop/rotation carefully. Wrap long English text; unsupported glyphs must not crash mandatory English cover (document/title data may contain other characters; implement a documented safe fallback or font strategy). Optional index after cover only if core is complete; its starting page numbers must account for index, and all footers reflect total count. No user document sent to network. No root/dependency edits.
+
+## Lifecycle owned by coordinator
+Requirements replacement atomically clears uploaded files/matches/expiry/result only after valid JSON load; invalid replacement preserves working state. Removing file unmatches it and clears affected expiry. Any content/match/date/index change invalidates previous result. Reset clears everything to initial state while retaining selected language. Async uploads/generation carry an epoch guard so stale work cannot restore a reset/replaced dataset. Limit up to 30 PDFs / 50 MiB total, count bytes from file.size, reject non-PDF before processing and confirm parse with pdf-lib.
+
+## Organizer sample expected evidence
+Tender deadline 2026-10-20. Use trade_license_2026.pdf (expiry 2027-06-30), TIN, VAT, bank_solvency.pdf (expiry 2026-12-31), one experience_cert.pdf (duplicate copy has equal SHA-256), technical proposal (6 pages), financial proposal (2 pages), scan_0042.pdf (1 scanned signed declaration). Optional R06 and R07 not provided. Without bonus index output total is 16 pages: cover1 + trade1 + TIN1 + VAT1 + bank1 + experience2 + technical6 + financial2 + declaration1. 2025 trade license expiry2025-06-30 must fail. company_logo.png must be rejected as a document. Do not modify supplied fixtures or generate unrelated synthetic PDF fixtures; rulebook says use only provided sample data.
+
+
+# Organizer sample requirements (exact)
+
+{
+  "tender": {
+    "tender_id": "T-2026-0417",
+    "title": "Supply of IT Equipment",
+    "procuring_entity": "Directorate of Sample Services",
+    "bidder": "Meghna Tech Solutions Ltd.",
+    "submission_deadline": "2026-10-20"
+  },
+  "requirements": [
+    {
+      "id": "R01",
+      "order": 1,
+      "title_en": "Trade License",
+      "title_bn": "ট্রেড লাইসেন্স",
+      "mandatory": true,
+      "has_expiry": true
+    },
+    {
+      "id": "R02",
+      "order": 2,
+      "title_en": "TIN Certificate",
+      "title_bn": "টিআইএন সনদ",
+      "mandatory": true,
+      "has_expiry": false
+    },
+    {
+      "id": "R03",
+      "order": 3,
+      "title_en": "VAT Registration Certificate",
+      "title_bn": "ভ্যাট নিবন্ধন সনদ",
+      "mandatory": true,
+      "has_expiry": false
+    },
+    {
+      "id": "R04",
+      "order": 4,
+      "title_en": "Bank Solvency Certificate",
+      "title_bn": "ব্যাংক সচ্ছলতা সনদ",
+      "mandatory": true,
+      "has_expiry": true
+    },
+    {
+      "id": "R05",
+      "order": 5,
+      "title_en": "Experience Certificate",
+      "title_bn": "অভিজ্ঞতার সনদ",
+      "mandatory": true,
+      "has_expiry": false
+    },
+    {
+      "id": "R06",
+      "order": 6,
+      "title_en": "Audited Financial Statement",
+      "title_bn": "নিরীক্ষিত আর্থিক বিবরণী",
+      "mandatory": false,
+      "has_expiry": false
+    },
+    {
+      "id": "R07",
+      "order": 7,
+      "title_en": "Manufacturer's Authorization",
+      "title_bn": "প্রস্তুতকারকের অনুমোদনপত্র",
+      "mandatory": false,
+      "has_expiry": true
+    },
+    {
+      "id": "R08",
+      "order": 8,
+      "title_en": "Technical Proposal",
+      "title_bn": "কারিগরি প্রস্তাব",
+      "mandatory": true,
+      "has_expiry": false
+    },
+    {
+      "id": "R09",
+      "order": 9,
+      "title_en": "Financial Proposal",
+      "title_bn": "আর্থিক প্রস্তাব",
+      "mandatory": true,
+      "has_expiry": false
+    },
+    {
+      "id": "R10",
+      "order": 10,
+      "title_en": "Signed Declaration",
+      "title_bn": "স্বাক্ষরিত ঘোষণাপত্র",
+      "mandatory": true,
+      "has_expiry": false
+    }
+  ]
+}
