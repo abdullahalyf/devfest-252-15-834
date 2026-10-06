@@ -18,3 +18,7 @@ Read your local TASK.md. Workers do not install packages, run Git, change branch
 Target the first working flow promptly. Main requirements precede bonuses. Keep all work in English. Include a short final REPORT.md with task ID, changed files, actual checks, unresolved gaps and integration instructions.
 
 U06/V05 final handover: all implementation workers have stopped writing. Coordinator owns integration, release and essential fixes until cutoff. Puku1/Puku2 may finish their documentation only. Never edit implementation after submission or 19:00 Asia/Dhaka.
+
+User-authorized U08 at18:40: Claude Code temporarily owns ONLY puku2/styles.css for restrained motion/interaction polish, with reduced-motion support. No JS/PDF/domain/contract changes. Finish and hand back by18:45. Coordinator is the sole release writer. Other workers remain read-only or chat-only; do not overlap stylesheet edits.
+
+U08 handover complete18:42: Claude has stopped writing. Coordinator owns the stylesheet and final release. Puku2 U09 is read-only review/chat output. No overlapping implementation writers remain.

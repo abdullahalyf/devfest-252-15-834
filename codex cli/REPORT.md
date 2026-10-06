@@ -1,3 +1,64 @@
+# V06 final public verification — complete
+
+2026-10-06 18:36 Asia/Dhaka. Started 18:32; completed within ten minutes. Wrote only this report. Implementation and the regression script remained read-only. Used the previously read ECC browser-qa skill, bundled Playwright and installed native Chrome in fresh signed-out contexts. No Git, installations, deployment, server or agents.
+
+**PASS within the exercised scope: public release matches the supplied full SHA `87d3ae6023c236e25168f0f7c87f795bd1b0c559`; all nine browser regression groups pass; actual downloaded mandatory PDF has 16 independently decoded pages. No confirmed release blocker found in these checks.** Submission receipt, eligibility and unrun checks below remain separate.
+
+## Exact release and bytes
+
+Target: https://tenderdesk-web-production.up.railway.app/
+
+`/release.json` HTTP 200: commit `87d3ae6023c236e25168f0f7c87f795bd1b0c559`, builtAt `2026-10-06T12:31:29.574Z` (18:31:29 Asia/Dhaka). All nine regression contexts observed that SHA and those assets. Manifest remained identical through the extended flow; final SHA checked again at 18:35. The user's subsequently supplied expected SHA exactly matches the observed revision. Earlier V04/V05 public evidence for `3b0c057f960b321de9c956a00af7c98803e45cc5` is historical; this is a new independently exercised public release.
+
+Each artifact fetched independently with HTTP 200 and hashed from its actual response bytes:
+
+| Artifact | Bytes | Actual SHA-256, identical to manifest |
+| --- | ---: | --- |
+| `assets/index-CZjRIh4-.css` | 17142 | `7e08650c5ca2bdb0afef350572cd5f7019b5587b2928432afe9e0c43d622ab7c` |
+| `assets/index-DnFJohs3.js` | 480755 | `95d22321df21780dfa3ce01712f1ec166a0d746aa81abd5679845427d39152bf` |
+| `index.html` | 573 | `54662b9e1635c09ca5e3b8979b38beaebecaa4af27fede5e0c40afeac5055f3c` |
+
+Actual browser download `T-2026-0417_Package.pdf`: **213266 bytes**, SHA-256 `b389e7ac767f337f08e386797ebd6a3eb12cdaec1ea656586e958c449ac37274`, independently decoded with installed pdf-lib to **16 pages**. This is the downloaded public output, not a local generator result or reported pageCount. Creation time makes this output hash specific to this run.
+
+Organizer JSON and the eight mandatory PDFs are the unchanged bytes listed in V05 below. Only metadata changed for CSV/HTML/prototype cases. The 31-file limit check used identical copies of the provided trade-license bytes with distinct names; no synthetic PDF fixture was invented.
+
+## PASS / FAIL / UNRUN matrix
+
+| Result | Trigger and actual evidence |
+| --- | --- |
+| PASS | Exact supplied public SHA and all three response-byte asset hashes above; revision stable across checks. |
+| PASS | `node "codex cli/browser-regressions.mjs" --url=https://tenderdesk-web-production.up.railway.app/`, 18:32:52–18:33:15, exit 0: all nine regression groups PASS; no uncaught application errors. |
+| PASS | IDs `__proto__`, `constructor`, `toString`; match real trade/TIN/VAT, edit trade expiry, download CSV. Decoded expiry cells exactly `["2027-06-30", "", ""]`; no inherited function, native-code or Object text; all three statuses `OK`. |
+| PASS | Eight whitespace/control-prefixed `=,+,-,@` title/filename pairs, including newline, tab, NBSP and BOM. English and Bangla actual CSV downloads decode to 11 records × 6 columns; every tested unsafe cell has a leading apostrophe; embedded quotes, commas and newlines preserved exactly. |
+| PASS | Real native date keys: `2027-06-30` → Home, Right, Right, 2,0,2,8 → `2028-06-30`. Intermediate values `0002`, `0020`, `0202` produce immediate `Expiry date needed`, `Expiry date needed`, `Expired`, then `OK`; Generate tracks status; first digit removes and revokes old PDF URL. Real month/day keys finish at `2028-07-29`. |
+| PASS | Exact English labels `Missing`, `Not provided`, `Expiry date needed`, `Expired`, `OK`; all five exact Bangla labels verified; switch back works. Expiry `2026-10-19` fails and `2026-10-20` passes against actual organizer deadline. |
+| PASS | Removal clears affected match/expiry; reset, valid replacement, refresh and Back navigation all remove stale download anchors and make remembered old Blob URLs unusable. Back used an actual BFCache restoration (`pageshow.persisted` history `[false,true]`). |
+| PASS | Actual sample JSON → ten ordered rows; eight mandatory organizer files matched; optional R06/R07 absent; trade/bank dates entered; Generate enabled; real Chrome PDF download event and readable byte stream obtained. |
+| PASS | Independent traversal of downloaded PDF content/Form/Image XObjects: every one of the 15 source pages appears on exact output pages 2–16 in document and within-document order. Scanned declaration image encoded bytes hash preserved; original page widths preserved; each source page receives an added footer margin. Cover/footers were not visually rendered in V06. |
+| PASS | Enabling index invalidates the earlier download; newly generated indexed bytes independently decode to 17 pages. Detailed index text/page-range rendering was not rechecked. |
+| PASS | Actual renamed experience duplicate has identical source SHA; attempting to map it to R06 rejects and restores the empty selector. Actual English error: `Identical file content is already matched to another document. Undo that match first.` |
+| PASS | Actual `company_logo.png` rejected, accepted file count unchanged; error `0 PDF files added. company_logo.png: Only PDF documents are allowed.` |
+| PASS | 31 unchanged organizer trade PDFs with distinct names: exactly 30 accepted; 31st rejected with `Maximum 30 PDF files.` Malformed replacement JSON preserves those 30 files and ten requirements. |
+| PASS | Paused real organizer PDF arrayBuffer read: Reset, requirements chooser and Generate are disabled. Releasing the same actual bytes finishes upload normally; subsequent Reset clears files and requirements. |
+| PASS | Loaded sample at viewport 375×812: document and body scrollWidth both 375 in English and Bangla. Focus + Enter activates language switch; focus + Space toggles index. This establishes functional controls/layout widths, not a full visual/accessibility audit. |
+| PASS | Imported tender title, requirement title and real-PDF filename containing `<img src=x onerror="window.__v06Xss=1">` display literally. No inserted img/svg in app; script sentinel remains unset. |
+| PASS | Observed page network during JSON/PDF upload, generation, duplicate handling and HTML metadata checks: four requests, all same-origin GET, no request bodies, no external requests, no document upload. No cookies/localStorage/sessionStorage entries and no page errors. Asset/manifest/README audit GETs via Playwright request client are separate audit traffic. CSV network traffic was not separately instrumented. Scope is observed traffic, not proof of all future behavior. |
+| PASS | README fetched from raw GitHub at exact deployed SHA, HTTP 200, 6905 bytes, SHA-256 `236116be6119f62118c4e8451e9485b076aa2b026588035e5ae2356e8d3c24a6`. Contains participant registration, correct live URL, local run instructions, main/bonus features, limitations and useful AI prompt; old pending placeholders absent. Previous V04 README finding resolved in this revision. |
+| UNRUN | Expected simultaneous reset/replacement recovery assertion during paused upload: ordinary Reset click timed out because the button is intentionally disabled while busy. Follow-up verified busy guards and clean completion; no race-recovery pass claimed. Programmatic bypass of disabled controls and generation-race injection not exercised. |
+| UNRUN | Actual 50 MiB byte boundary: organizer PDFs cannot reach it within 30 files; no fabricated PDF bytes or spoofed file.size used. |
+| UNRUN | Native OS chooser, native save-to-disk/open, visual PDF cover/footer/trade/declaration rendering, print readability, full keyboard traversal/screen-reader/color contrast, other browsers and exhaustive mobile widths. Chrome input-file APIs and real browser download streams used. Coordinator's earlier visual/native evidence remains separate. |
+| UNRUN | Actual spreadsheet formula execution. Checked neutralized decoded cell bytes, not Excel/LibreOffice execution. |
+| UNRUN | Encrypted/corrupt organizer PDF paths; supplied sample has no such fixture. Exhaustive security assessment and hosting hardening remain outside demonstrated evidence. |
+| UNRUN | Final form receipt, registration authenticity, deadline eligibility, complete commit/push cadence and final submitted SHA. No Git or submission action performed. Existing coordinator ownership applies. |
+
+## Limits and handover
+
+Extended PDF/assets/duplicates/mobile/HTML/network/README script: exit 0, run entirely from transient stdin without writing files. Upload-limit/malformed-replacement script passed its first two checks, then exited 1 on the disabled Reset click timeout; this was a harness attempt blocked by an observed UI guard, not a reproduced application defect. Focused busy-guard/recovery follow-up: exit 0. All browser processes from these checks closed in finally blocks.
+
+Local source hashes remained stable during the nine-group run and match V05. Those hashes are local evidence only; public acceptance above comes from served bytes and exercised deployed behavior. No implementation, fixtures, regression script, deployment or root configuration changed. No newly reproduced implementation finding to assign. Handover complete; writing stopped.
+
+---
+
 # V05 report — complete / browser regressions handed back
 
 2026-10-06 18:21 Asia/Dhaka. Started 18:15; completed within ten minutes. Wrote only `codex cli/browser-regressions.mjs` and this report. Implementation remained read-only. Used the previously read ECC browser-qa skill; no Git, installations, deployment, server or agents.

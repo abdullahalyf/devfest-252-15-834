@@ -94,7 +94,7 @@ Codex app coordinated contracts, app lifecycle, integration, Git, browser accept
 
 Useful actual prompt sent to Claude Code:
 
-> Start task P01 immediately. Read E:\vibecode_contest\vibecode_contest_final\claude\TASK.md and follow it completely. Read the shared docs/CONTRACT.md before coding. Implement PDF inspection and generation using pdf-lib: English cover, correct document/page order, and readable numbered footers in a separate margin that never covers original content. Edit only your assigned claude files. Do not use Git, install packages or deploy. Deliver working code and claude/REPORT.md within10 minutes. Do not stop at planning.
+> Start task P01 immediately. Read E:\vibecode_contest\vibecode_contest_final\claude\TASK.md and follow it completely. Read the shared docs/CONTRACT.md before coding. Implement PDF inspection and generation using pdf-lib: English cover, correct document/page order, and readable numbered footers in a separate margin that never covers original content. Edit only your assigned claude files. Do not use Git, install packages or deploy. Deliver working code and claude/REPORT.md within 10 minutes. Do not stop at planning.
 
 Assignments and contracts are preserved in `TASKS.md`, `docs/CONTRACT.md` and worker task briefs. All application source was created during the contest build phase; organizer fictional samples were kept unchanged.
 

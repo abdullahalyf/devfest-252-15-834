@@ -289,7 +289,7 @@ body { font-family: var(--tp-font); font-size: 15px; line-height: 1.5; -webkit-t
   color: var(--tp-ink);
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease, transform 0.08s ease;
 }
 .tp-btn:focus-visible { outline: 3px solid var(--tp-teal); outline-offset: 2px; }
 .tp-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -639,6 +639,27 @@ body { font-family: var(--tp-font); font-size: 15px; line-height: 1.5; -webkit-t
   .tp-file-item .tp-btn { flex: 0 0 auto; }
 }
 
+/* U08 motion: transform/opacity only, no layout change. Nodes are rebuilt on each
+   render, so nothing here uses entrance keyframes that would replay while typing. */
+.tp-btn:hover:not(:disabled) { box-shadow: 0 2px 6px rgba(27, 34, 48, 0.12); }
+.tp-btn:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
+.tp-dropzone { transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; }
+.tp-dropzone-icon { transition: transform 0.15s ease; }
+.tp-dropzone:hover:not(:disabled) .tp-dropzone-icon, .tp-dropzone-over .tp-dropzone-icon { transform: translateY(-2px); }
+.tp-dropzone-over { box-shadow: inset 0 0 0 2px var(--tp-teal); }
+.tp-dropzone:active:not(:disabled) { transform: translateY(1px); }
+.tp-select, .tp-date { transition: border-color 0.12s ease, box-shadow 0.12s ease; }
+.tp-meter-fill { transition: width 0.25s ease; }
+@keyframes tp-busy-sweep { from { background-position: 0 0; } to { background-position: 40px 0; } }
+.tp-root[data-busy="true"] .tp-gen .tp-btn-primary {
+  opacity: 1;
+  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.16) 0 10px, transparent 10px 20px);
+  background-size: 40px 100%;
+  animation: tp-busy-sweep 0.9s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  * { transition: none !important; animation: none !important; }
+  .tp-btn:active:not(:disabled), .tp-dropzone:active:not(:disabled),
+  .tp-dropzone:hover:not(:disabled) .tp-dropzone-icon, .tp-dropzone-over .tp-dropzone-icon { transform: none; }
 }
